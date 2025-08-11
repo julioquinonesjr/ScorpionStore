@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scorpion Fighting System Online Store</title>
+  <style>
+    :root{
+      --bg:#000;            /* Solid black background */
+      --text:#e7e7e7;
+      --muted:#a5a5a5;
+      --border:#2a2a2a;
+      --panel:#0b0b0b;
+      --card:#111;
+      --shadow:0 12px 30px rgba(0,0,0,.45);
+      --accent:#f59e0b;
+      --png-bg:#d3d3d3;     /* light gray background for PNGs */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+    a{color:inherit;text-decoration:none}
+
+    .wrap{max-width:1200px;margin:0 auto;padding:24px}
+
+    header{position:sticky;top:0;z-index:10;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+    .topbar{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:14px 24px}
+    .brand{display:flex;align-items:center;gap:14px}
+    .brand img{width:96px;height:auto;object-fit:contain; background:transparent !important;} /* Bigger header logo */
+    .brand h1{margin:0;font-size:18px;letter-spacing:.3px}
+
+    nav{display:flex;gap:10px}
+    .tab{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:var(--panel);padding:8px 12px;border-radius:999px}
+    .tab[aria-current="page"]{outline:2px solid var(--accent)}
+    .tab:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+
+    /* Home hero */
+    .hero{display:grid;place-items:center;text-align:center;padding:48px 24px}
+    .hero .logo{width:min(1100px,90vw);height:auto;display:block;margin:0 auto 16px auto;background:transparent !important;} /* HUGE main page logo */
+    .hero h2{margin:6px 0 0;font-size:28px}
+
+    /* Gallery grid — smaller thumbnails */
+    .grid{display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:16px; padding:24px}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+    .media{display:block;background:#0b0b0b}
+    .media img{display:block;width:100%;height:auto;object-fit:contain}
+    /* PNGs: light gray background for product images */
+    .card .media img[src$=".png" i]{background:var(--png-bg)}
+
+    /* Modal (click to enlarge) */
+    .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.8)}
+    .modal.open{display:grid}
+    .dialog{background:var(--card);border:1px solid var(--border);border-radius:18px;max-width:92vw;width:min(1100px,92vw);box-shadow:var(--shadow);overflow:hidden}
+    .dialog-img{background:#0a0a0a;display:grid;place-items:center}
+    .dialog-img img{width:100%;height:auto}
+    .dialog-info{padding:16px}
+    .close{position:absolute;top:16px;right:16px;border:1px solid var(--border);background:var(--panel);color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer}
+
+    @media print{header,.modal{display:none !important}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar wrap">
+      <div class="brand">
+        <img id="brandLogo" class="logo" src="" alt="Scorpion Logo" />
+        <h1>Scorpion Fighting System Online Store</h1>
+      </div>
+      <nav aria-label="Sections">
+        <a class="tab" data-route="/" href="#/">Home</a>
+        <a class="tab" data-route="/hoodies" href="#/hoodies">Hoodies</a>
+        <a class="tab" data-route="/tshirts" href="#/tshirts">T‑Shirts</a>
+        <a class="tab" data-route="/rash-guards" href="#/rash-guards">Rash Guards</a>
+        <a class="tab" data-route="/logos" href="#/logos">Logos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="app" aria-live="polite">
+    <!-- Home (title + scorpion logo) -->
+    <section class="hero" data-view="home">
+      <img id="heroLogo" class="logo" src="" alt="Scorpion Fighting System Logo" />
+      <h2>Scorpion Fighting System Online Store</h2>
+    </section>
+
+    <!-- Category grids; populated by JS -->
+    <section id="grid" class="grid" data-view="grid" hidden></section>
+  </main>
+
+  <!-- Modal for click-to-enlarge -->
+  <div class="modal" id="modal" aria-hidden="true" aria-label="Image preview dialog">
+    <button class="close" id="closeModal" aria-label="Close">✕</button>
+    <div class="dialog">
+      <div class="dialog-img"><img id="modalImg" alt="" /></div>
+      <div class="dialog-info">
+        <h3 class="title" id="modalTitle"></h3>
+        <p class="desc" id="modalDesc"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== CONFIG matched to your screenshot =====
+    // HTML file lives inside the images folder.
+    // Subfolders are capitalized and one has a space: "Rash Guards".
+    const CATEGORIES = {
+      hoodies:      'Hoodies/',
+      tshirts:      'TShirts/',
+      'rash-guards':'Rash Guards/',
+      logos:        'Logos/'
+    };
+
+    const EXTS = ['JPG','JPEG','PNG','WEBP','jpg','jpeg','png','webp'];
+    const START = 1, END = 9999; // IMG_0001 .. IMG_9999
+
+    const app = document.getElementById('app');
+    const grid = document.getElementById('grid');
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modalImg');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDesc');
+
+    // Deduping sets (per navigation)
+    let seenSrc = new Set();
+
+    function clearGrid(){
+      grid.innerHTML = '';
+      seenSrc.clear();
+    }
+
+    function addCard(src){
+      if (seenSrc.has(src)) return; // prevent duplicates
+      seenSrc.add(src);
+
+      const fileName = src.split('/').pop();
+      const baseTitle = (fileName || '').replace(/\.[^.]+$/, '');
+
+      const article = document.createElement('article');
+      article.className = 'card';
+      article.innerHTML = `
+        <a class="media" href="#" aria-label="Open ${fileName}"><img src="${src}" alt="${fileName}"></a>
+      `;
+
+      article.querySelector('.media').addEventListener('click', (e)=>{
+        e.preventDefault();
+        modalImg.src = src;
+        modalTitle.textContent = baseTitle;
+        modalDesc.textContent = '';
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden','false');
+      });
+      grid.appendChild(article);
+    }
+
+    function loadImage(url){
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+      });
+    }
+
+    async function loadCategory(cat){
+      clearGrid();
+      const home = document.querySelector('[data-view="home"]');
+      if(!cat){ home.hidden = false; grid.hidden = true; return; }
+      home.hidden = true; grid.hidden = false;
+
+      const folder = CATEGORIES[cat];
+      if(!folder) return;
+
+      // Try numbers; for each number, accept only the first extension that exists
+      const MAX_CONSEC_MISSES = 10000; // early stop so it stays fast
+      let misses = 0;
+      for(let i = START; i <= END; i++){
+        const num = String(i).padStart(4,'0');
+        let foundForThis = false;
+        for(const ext of EXTS){
+          const path = `${folder}IMG_${num}.${ext}`;
+          /* eslint-disable no-await-in-loop */
+          if(await loadImage(path)) { addCard(path); foundForThis = true; break; }
+        }
+        misses = foundForThis ? 0 : (misses+1);
+        if(misses >= MAX_CONSEC_MISSES) break;
+      }
+    }
+
+    // Routing (hash-based): #/, #/hoodies, #/tshirts, #/rash-guards, #/logos
+    function route(){
+      const hash = location.hash.replace(/^#/, '') || '/';
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(t => t.removeAttribute('aria-current'));
+      const active = document.querySelector(`.tab[href="#${hash}"]`);
+      if(active) active.setAttribute('aria-current','page');
+
+      if(hash === '/' || hash === ''){ loadCategory(null); }
+      else if(hash.startsWith('/hoodies')){ loadCategory('hoodies'); }
+      else if(hash.startsWith('/tshirts')){ loadCategory('tshirts'); }
+      else if(hash.startsWith('/rash-guards')){ loadCategory('rash-guards'); }
+      else if(hash.startsWith('/logos')){ loadCategory('logos'); }
+      else { loadCategory(null); }
+    }
+
+    window.addEventListener('hashchange', route);
+    window.addEventListener('DOMContentLoaded', route);
+
+    // Ensure nav clicks always trigger routing immediately
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('nav .tab').forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const href = a.getAttribute('href');
+          if (href) {
+            location.hash = href;
+            route();
+          }
+        });
+      });
+    });
+
+    // Modal close controls
+    document.getElementById('closeModal').addEventListener('click',()=>{
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+    });
+    modal.addEventListener('click', e=>{ if(e.target===modal){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }});
+    window.addEventListener('keydown', e=>{ if(e.key==='Escape') { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }});
+
+    // Logos: set from local file (same folder as HTML)
+    (function setLogos(){
+      const brand = document.getElementById('brandLogo');
+      const hero  = document.getElementById('heroLogo');
+      const candidates = ['scorpion-logo.png','scorpion-logo.jpg','logo.png','logo.jpg','SCORPION-LOGO.PNG','LOGO.PNG'];
+      for(const src of candidates){
+        const img = new Image();
+        img.onload = () => { brand.src = src; hero.src = src; };
+        img.src = src;
+        if(img.complete && img.naturalWidth){ brand.src = src; hero.src = src; break; }
+      }
+    })();
+  </script>
+</body>
+</html>
