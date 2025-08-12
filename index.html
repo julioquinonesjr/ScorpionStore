@@ -101,9 +101,10 @@
   </div>
 
   <script>
-    // ===== CONFIG matched to your screenshot =====
-    // HTML file lives inside the images folder.
-    // Subfolders are capitalized and one has a space: "Rash Guards".
+    // ===== CONFIG for GitHub Pages =====
+    // Place index.html at the REPO ROOT.
+    // Subfolders sit at the ROOT too and are CASE‑SENSITIVE (must match exactly):
+    //   Hoodies/, TShirts/, "Rash Guards"/, Logos/
     const CATEGORIES = {
       hoodies:      'Hoodies/',
       tshirts:      'TShirts/',
@@ -178,7 +179,8 @@
         const num = String(i).padStart(4,'0');
         let foundForThis = false;
         for(const ext of EXTS){
-          const path = `${folder}IMG_${num}.${ext}`;
+          const rawPath = `${folder}IMG_${num}.${ext}`;
+          const path = encodeURI(rawPath); // encode spaces (e.g., "Rash Guards/") for GitHub Pages
           /* eslint-disable no-await-in-loop */
           if(await loadImage(path)) { addCard(path); foundForThis = true; break; }
         }
