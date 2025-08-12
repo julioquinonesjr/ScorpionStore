@@ -6,19 +6,13 @@
   <title>Scorpion Fighting System Online Store</title>
   <style>
     :root{
-      --bg:#000;
-      --text:#e7e7e7;
-      --muted:#a5a5a5;
-      --border:#2a2a2a;
-      --panel:#0b0b0b;
-      --card:#111;
-      --shadow:0 12px 30px rgba(0,0,0,.45);
-      --accent:#f59e0b;
-      --png-bg:#d3d3d3;
+      --bg:#000; --text:#e7e7e7; --muted:#a5a5a5; --border:#2a2a2a;
+      --panel:#0b0b0b; --card:#111; --shadow:0 12px 30px rgba(0,0,0,.45);
+      --accent:#f59e0b; --png-bg:#d3d3d3;
     }
     *{box-sizing:border-box}
     html,body{height:100%; overflow-x:hidden; scroll-behavior:smooth}
-    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
     a{color:inherit;text-decoration:none}
 
     .wrap{max-width:1200px;margin:0 auto;padding:24px}
@@ -26,7 +20,7 @@
     header{position:sticky;top:0;z-index:10;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
     .topbar{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:14px 24px}
     .brand{display:flex;align-items:center;gap:14px}
-    .brand img{width:120px;height:auto;object-fit:contain;background:transparent !important;} /* larger header logo */
+    .brand img{width:120px;height:auto;object-fit:contain;background:transparent !important;}
     .brand h1{margin:0;font-size:18px;letter-spacing:.3px}
 
     nav{display:flex;gap:10px; overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; scrollbar-width:none; touch-action: pan-x pinch-zoom}
@@ -35,29 +29,28 @@
     .tab[aria-current="page"]{outline:2px solid var(--accent)}
     .tab:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
 
-    /* Home hero */
     .hero{display:grid;place-items:center;text-align:center;padding:48px 24px}
-    .hero .logo{width:min(1200px,92vw);height:auto;display:block;margin:0 auto 16px auto;background:transparent !important;} /* HUGE main page logo */
+    .hero .logo{width:min(1200px,92vw);height:auto;display:block;margin:0 auto 16px auto;background:transparent !important;}
     .hero h2{margin:6px 0 0;font-size:28px}
 
-    /* Gallery grid — compact thumbnails */
     .grid{display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:16px; padding:24px}
-
     .card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
     .media{display:block;background:#0b0b0b}
     .media img{display:block;width:100%;height:auto;object-fit:contain}
-    .card .media img[src$=".png" i]{background:var(--png-bg)} /* light gray only for product PNGs */
+    .card .media img[src$=".png" i]{background:var(--png-bg)}
 
-    /* Modal (click to enlarge) */
-    .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.8)}
+    .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.8);}
     .modal.open{display:grid}
-    .dialog{background:var(--card);border:1px solid var(--border);border-radius:18px;max-width:92vw;width:min(1100px,92vw);box-shadow:var(--shadow);overflow:hidden}
+    .dialog{background:var(--card);border:1px solid var(--border);border-radius:18px;max-width:92vw;width:min(1100px,92vw);box-shadow:var(--shadow);overflow:hidden;position:relative}
     .dialog-img{background:#0a0a0a;display:grid;place-items:center}
     .dialog-img img{width:100%;height:auto}
     .dialog-info{padding:16px}
     .close{position:absolute;top:16px;right:16px;border:1px solid var(--border);background:var(--panel);color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer}
 
-    /* Back-to-top button */
+    /* Close hints + prevent background scroll while open */
+    .modal, .dialog-img img{ cursor: zoom-out; }
+    body.modal-open{ height:100vh; overflow:hidden; }
+
     .to-top{position:fixed; right:16px; bottom:16px; display:none; padding:10px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:var(--text); box-shadow:var(--shadow); z-index:50}
     .to-top.show{display:block}
 
@@ -118,8 +111,21 @@
     const modalImg = document.getElementById('modalImg');
     const modalTitle = document.getElementById('modalTitle');
 
-    let seen = new Set();
+    function openModal(src, title){
+      modalImg.src = src;
+      modalTitle.textContent = title || '';
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      document.body.classList.add('modal-open');
+    }
+    function closeModal(){
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+      document.body.classList.remove('modal-open');
+      modalImg.src = '';
+    }
 
+    let seen = new Set();
     function clearGrid(){ grid.innerHTML=''; seen.clear(); }
 
     function addCard(src){
@@ -130,17 +136,10 @@
       const el = document.createElement('article');
       el.className = 'card';
       el.innerHTML = `<a class="media" href="#"><img src="${src}" alt="${name}"></a>`;
-      el.querySelector('.media').onclick = (e)=>{
-        e.preventDefault();
-        modalImg.src = src;
-        modalTitle.textContent = base;
-        modal.classList.add('open');
-        modal.setAttribute('aria-hidden','false');
-      };
+      el.querySelector('.media').onclick = (e)=>{ e.preventDefault(); openModal(src, base); };
       grid.appendChild(el);
     }
 
-    // Basic loader for probing (fallback only)
     function loadImage(url){
       return new Promise(res => {
         const i = new Image();
@@ -240,7 +239,6 @@
     }
 
     function route(){
-      // Always bring view back to top when switching sections
       window.scrollTo({top:0, behavior:'smooth'});
       const hash = location.hash.replace(/^#/, '') || '/';
       document.querySelectorAll('.tab').forEach(a => a.removeAttribute('aria-current'));
@@ -257,7 +255,7 @@
     window.addEventListener('hashchange', route);
     window.addEventListener('DOMContentLoaded', route);
 
-    // nav click helper
+    // Top nav click helper
     document.addEventListener('DOMContentLoaded', ()=>{
       document.querySelectorAll('nav .tab').forEach(a => {
         a.addEventListener('click', e => {
@@ -268,13 +266,20 @@
       });
     });
 
-    // Back-to-top visibility toggle + action
+    // Back-to-top button
     const toTopBtn = document.getElementById('toTop');
     window.addEventListener('scroll', ()=>{
       if(window.scrollY > 300) toTopBtn.classList.add('show');
       else toTopBtn.classList.remove('show');
     });
     toTopBtn.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+
+    // Modal close controls (tap anywhere: backdrop, image, or X; ESC closes too)
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    modal.addEventListener('click', (e)=>{
+      if (e.target === modal || e.target.id === 'modalImg' || e.target.closest('.dialog-img')) closeModal();
+    });
+    window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
     // logo auto-detect (next to index.html)
     (function setLogos(){
