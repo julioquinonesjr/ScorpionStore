@@ -6,53 +6,65 @@
   <title>Scorpion Fighting System Online Store</title>
   <style>
     :root{
-      --bg:#000; --text:#e7e7e7; --muted:#a5a5a5; --border:#2a2a2a;
-      --panel:#0b0b0b; --card:#111; --shadow:0 12px 30px rgba(0,0,0,.45);
-      --accent:#f59e0b; --png-bg:#d3d3d3;
+      --bg:#000;            /* Solid black background */
+      --text:#e7e7e7;
+      --muted:#a5a5a5;
+      --border:#2a2a2a;
+      --panel:#0b0b0b;
+      --card:#111;
+      --shadow:0 12px 30px rgba(0,0,0,.45);
+      --accent:#f59e0b;
+      --png-bg:#d3d3d3;     /* light gray background for PNGs */
     }
     *{box-sizing:border-box}
     html,body{height:100%; overflow-x:hidden; scroll-behavior:smooth}
-    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
     a{color:inherit;text-decoration:none}
 
     .wrap{max-width:1200px;margin:0 auto;padding:24px}
 
     header{position:sticky;top:0;z-index:10;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
-    .topbar{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:14px 24px}
-    .brand{display:flex;align-items:center;gap:14px}
-    .brand img{width:120px;height:auto;object-fit:contain;background:transparent !important;}
+    .topbar{display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;padding:14px 24px}
+    .brand{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center}
+    .brand img{width:96px;height:auto;object-fit:contain; background:transparent !important;} /* Bigger header logo */
     .brand h1{margin:0;font-size:18px;letter-spacing:.3px}
 
-    nav{display:flex;gap:10px; overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; scrollbar-width:none; touch-action: pan-x pinch-zoom}
+    nav{display:flex;gap:10px; justify-content:center; width:100%; overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; scrollbar-width:none; touch-action: pan-x pinch-zoom}
     nav::-webkit-scrollbar{display:none}
     .tab{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:var(--panel);padding:8px 12px;border-radius:999px}
     .tab[aria-current="page"]{outline:2px solid var(--accent)}
     .tab:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
 
+    /* Home hero */
     .hero{display:grid;place-items:center;text-align:center;padding:48px 24px}
-    .hero .logo{width:min(1200px,92vw);height:auto;display:block;margin:0 auto 16px auto;background:transparent !important;}
+    .hero .logo{width:min(1100px,90vw);height:auto;display:block;margin:0 auto 16px auto;background:transparent !important;} /* HUGE main page logo */
     .hero h2{margin:6px 0 0;font-size:28px}
 
+    /* Gallery grid — smaller thumbnails */
     .grid{display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:16px; padding:24px}
+
     .card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
     .media{display:block;background:#0b0b0b}
     .media img{display:block;width:100%;height:auto;object-fit:contain}
+    /* PNGs: light gray background for product images */
     .card .media img[src$=".png" i]{background:var(--png-bg)}
 
-    .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.8);}
+    /* Modal (click to enlarge) */
+    .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.8)}
     .modal.open{display:grid}
-    .dialog{background:var(--card);border:1px solid var(--border);border-radius:18px;max-width:92vw;width:min(1100px,92vw);box-shadow:var(--shadow);overflow:hidden;position:relative}
+    .dialog{background:var(--card);border:1px solid var(--border);border-radius:18px;max-width:92vw;width:min(1100px,92vw);box-shadow:var(--shadow);overflow:hidden}
     .dialog-img{background:#0a0a0a;display:grid;place-items:center}
     .dialog-img img{width:100%;height:auto}
     .dialog-info{padding:16px}
     .close{position:absolute;top:16px;right:16px;border:1px solid var(--border);background:var(--panel);color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer}
 
-    /* Close hints + prevent background scroll while open */
-    .modal, .dialog-img img{ cursor: zoom-out; }
-    body.modal-open{ height:100vh; overflow:hidden; }
-
+    /* Back-to-top button */
     .to-top{position:fixed; right:16px; bottom:16px; display:none; padding:10px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:var(--text); box-shadow:var(--shadow); z-index:50}
     .to-top.show{display:block}
+
+    /* Modal closing UX */
+    .modal, .dialog-img img{ cursor: zoom-out; }
+    body.modal-open{ height:100vh; overflow:hidden; }
 
     @media print{header,.modal{display:none !important}}
   </style>
@@ -67,7 +79,7 @@
       <nav aria-label="Sections">
         <a class="tab" data-route="/" href="#/">Home</a>
         <a class="tab" data-route="/hoodies" href="#/hoodies">Hoodies</a>
-        <a class="tab" data-route="/tshirts" href="#/tshirts">T-Shirts</a>
+        <a class="tab" data-route="/tshirts" href="#/tshirts">T‑Shirts</a>
         <a class="tab" data-route="/rash-guards" href="#/rash-guards">Rash Guards</a>
         <a class="tab" data-route="/logos" href="#/logos">Logos</a>
       </nav>
@@ -75,14 +87,18 @@
   </header>
 
   <main class="wrap" id="app" aria-live="polite">
+    <!-- Home (title + scorpion logo) -->
     <section class="hero" data-view="home">
       <img id="heroLogo" class="logo" src="" alt="Scorpion Fighting System Logo" />
       <h2>Scorpion Fighting System Online Store</h2>
     </section>
+
+    <!-- Category grids; populated by JS -->
     <section id="grid" class="grid" data-view="grid" hidden></section>
   </main>
 
-  <div class="modal" id="modal" aria-hidden="true">
+  <!-- Modal for click-to-enlarge -->
+  <div class="modal" id="modal" aria-hidden="true" aria-label="Image preview dialog">
     <button class="close" id="closeModal" aria-label="Close">✕</button>
     <div class="dialog">
       <div class="dialog-img"><img id="modalImg" alt="" /></div>
@@ -96,16 +112,21 @@
   <button id="toTop" class="to-top" aria-label="Back to top">↑</button>
 
   <script>
-    // ===== GitHub Pages config (root-level, case-sensitive) =====
+    // ===== CONFIG for GitHub Pages =====
+    // Place index.html at the REPO ROOT.
+    // Subfolders sit at the ROOT too and are CASE‑SENSITIVE (must match exactly):
+    //   Hoodies/, TShirts/, "Rash Guards"/, Logos/
     const CATEGORIES = {
       hoodies:      'Hoodies/',
       tshirts:      'TShirts/',
       'rash-guards':'Rash Guards/',
       logos:        'Logos/'
     };
-    const EXTS = ['JPG','JPEG','PNG','WEBP','jpg','jpeg','png','webp'];
-    const START = 1, END = 9999;
 
+    const EXTS = ['JPG','JPEG','PNG','WEBP','jpg','jpeg','png','webp'];
+    const START = 1, END = 9999; // IMG_0001 .. IMG_9999
+
+    const app = document.getElementById('app');
     const grid = document.getElementById('grid');
     const modal = document.getElementById('modal');
     const modalImg = document.getElementById('modalImg');
@@ -124,65 +145,50 @@
       document.body.classList.remove('modal-open');
       modalImg.src = '';
     }
+    const modalDesc = document.getElementById('modalDesc');
 
-    let seen = new Set();
-    function clearGrid(){ grid.innerHTML=''; seen.clear(); }
+    // Deduping sets (per navigation)
+    let seenSrc = new Set();
+
+    function clearGrid(){
+      grid.innerHTML = '';
+      seenSrc.clear();
+    }
 
     function addCard(src){
-      if(seen.has(src)) return;
-      seen.add(src);
-      const name = src.split('/').pop();
-      const base = (name||'').replace(/\.[^.]+$/, '');
-      const el = document.createElement('article');
-      el.className = 'card';
-      el.innerHTML = `<a class="media" href="#"><img src="${src}" alt="${name}"></a>`;
-      el.querySelector('.media').onclick = (e)=>{ e.preventDefault(); openModal(src, base); };
-      grid.appendChild(el);
+      if (seenSrc.has(src)) return; // prevent duplicates
+      seenSrc.add(src);
+
+      const fileName = src.split('/').pop();
+      const baseTitle = (fileName || '').replace(/\.[^.]+$/, '');
+
+      const article = document.createElement('article');
+      article.className = 'card';
+      article.innerHTML = `
+        <a class="media" href="#" aria-label="Open ${fileName}"><img src="${src}" alt="${fileName}"></a>
+      `;
+
+      article.querySelector('.media').addEventListener('click', (e)=>{
+        e.preventDefault();
+        modalImg.src = src;
+        modalTitle.textContent = baseTitle;
+        modalDesc.textContent = '';
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden','false');
+      });
+      grid.appendChild(article);
     }
 
     function loadImage(url){
-      return new Promise(res => {
-        const i = new Image();
-        i.onload = () => res(true);
-        i.onerror = () => res(false);
-        i.src = url;
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
       });
     }
 
-    // --- Detect GitHub Pages context (username/repo) ---
-    function getGhContext(){
-      const host = location.hostname;
-      if(!/github\.io$/i.test(host)) return null;
-      const owner = host.split('.')[0];
-      const parts = location.pathname.split('/').filter(Boolean);
-      const repo = parts[0] || '';
-      return { owner, repo };
-    }
-
-    // --- Use GitHub API to list files (fast & exact) ---
-    async function tryListFolder(cat){
-      const folder = CATEGORIES[cat];
-      if(!folder) return false;
-      const ctx = getGhContext();
-      if(!ctx) return false;
-      const clean = folder.replace(/\/$/, '');
-      const encodedPath = clean.split('/').map(encodeURIComponent).join('/');
-      const api = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/contents/${encodedPath}`;
-      try{
-        const res = await fetch(api, { headers:{ 'Accept':'application/vnd.github.v3+json' }});
-        if(!res.ok) return false;
-        const items = await res.json();
-        if(!Array.isArray(items)) return false;
-        const files = items
-          .filter(x => x.type==='file' && /^IMG_\d{4}\.(jpg|jpeg|png|webp)$/i.test(x.name))
-          .sort((a,b)=> a.name.localeCompare(b.name));
-        if(files.length === 0) return false;
-        files.forEach(x => addCard(encodeURI(`${folder}${x.name}`)));
-        return true;
-      }catch(e){ return false; }
-    }
-
-    // --- Fallback: quick seeding + expand around hits ---
+    // --- GitHub-friendly helpers: coarse sample + expand around hits ---
     async function firstExistingPath(folder, num){
       const n = String(num).padStart(4,'0');
       for(const ext of EXTS){
@@ -193,80 +199,88 @@
       }
       return null;
     }
+
     async function findSeeds(folder){
-      const seeds=[];
-      for(let i=START;i<=END;i+=20){
-        const p = await firstExistingPath(folder,i);
-        if(p) seeds.push(i);
-        if(seeds.length>=8) break;
+      const seeds = [];
+      // Coarse sampling every 25 numbers to discover where files exist
+      for(let i=START; i<=END; i+=25){
+        const p = await firstExistingPath(folder, i);
+        if(p){ seeds.push(i); }
+        // Keep it snappy: if we already found a few seeds, that's enough
+        if(seeds.length >= 8) break;
       }
-      if(seeds.length===0){
-        for(let i=START;i<=END;i+=10){
-          const p = await firstExistingPath(folder,i);
-          if(p){ seeds.push(i); if(seeds.length>=4) break; }
+      // If no seeds found, try a smaller step to be thorough
+      if(seeds.length === 0){
+        for(let i=START; i<=END; i+=10){
+          const p = await firstExistingPath(folder, i);
+          if(p){ seeds.push(i); if(seeds.length >= 4) break; }
         }
       }
       return seeds;
     }
-    async function expandFrom(folder, idx){
-      const MAX_MISS=30;
-      let miss=0;
-      for(let i=idx;i>=START;i--){
-        const p = await firstExistingPath(folder,i);
-        if(p){ addCard(p); miss=0; } else if(++miss>=MAX_MISS) break;
+
+    async function expandFrom(folder, startIdx){
+      const MAX_MISSES = 30; // stop when we hit a long gap
+      // Expand downward
+      let misses = 0;
+      for(let i=startIdx; i>=START; i--){
+        const p = await firstExistingPath(folder, i);
+        if(p){ addCard(p); misses = 0; }
+        else if(++misses >= MAX_MISSES) break;
       }
-      miss=0;
-      for(let i=idx+1;i<=END;i++){
-        const p = await firstExistingPath(folder,i);
-        if(p){ addCard(p); miss=0; } else if(++miss>=MAX_MISS) break;
+      // Expand upward
+      misses = 0;
+      for(let i=startIdx+1; i<=END; i++){
+        const p = await firstExistingPath(folder, i);
+        if(p){ addCard(p); misses = 0; }
+        else if(++misses >= MAX_MISSES) break;
       }
     }
 
     async function loadCategory(cat){
       clearGrid();
       const home = document.querySelector('[data-view="home"]');
-      if(!cat){ home.hidden=false; grid.hidden=true; return; }
-      home.hidden=true; grid.hidden=false;
+      if(!cat){ home.hidden = false; grid.hidden = true; return; }
+      home.hidden = true; grid.hidden = false;
 
       const folder = CATEGORIES[cat];
       if(!folder) return;
 
-      // Prefer GitHub API listing; fallback to probing
-      if(await tryListFolder(cat)) return;
-
+      // 1) Find a few seed indices quickly
       const seeds = await findSeeds(folder);
-      for(const s of seeds){ await expandFrom(folder,s); }
+      if(seeds.length === 0){
+        // Nothing found during sampling; bail quietly (likely no files yet)
+        return;
+      }
+      // 2) Expand around each seed to load the rest without hammering GH with 10k requests
+      for(const s of seeds){
+        /* eslint-disable no-await-in-loop */
+        await expandFrom(folder, s);
+      }
     }
 
+    // Routing (hash-based): #/, #/hoodies, #/tshirts, #/rash-guards, #/logos
     function route(){
+      // Always bring view back to top when switching sections
       window.scrollTo({top:0, behavior:'smooth'});
       const hash = location.hash.replace(/^#/, '') || '/';
-      document.querySelectorAll('.tab').forEach(a => a.removeAttribute('aria-current'));
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(t => t.removeAttribute('aria-current'));
       const active = document.querySelector(`.tab[href="#${hash}"]`);
       if(active) active.setAttribute('aria-current','page');
 
-      if(hash==='/'||hash===''){ loadCategory(null); }
-      else if(hash.startsWith('/hoodies')) loadCategory('hoodies');
-      else if(hash.startsWith('/tshirts')) loadCategory('tshirts');
-      else if(hash.startsWith('/rash-guards')) loadCategory('rash-guards');
-      else if(hash.startsWith('/logos')) loadCategory('logos');
-      else loadCategory(null);
+      if(hash === '/' || hash === ''){ loadCategory(null); }
+      else if(hash.startsWith('/hoodies')){ loadCategory('hoodies'); }
+      else if(hash.startsWith('/tshirts')){ loadCategory('tshirts'); }
+      else if(hash.startsWith('/rash-guards')){ loadCategory('rash-guards'); }
+      else if(hash.startsWith('/logos')){ loadCategory('logos'); }
+      else { loadCategory(null); }
     }
+
     window.addEventListener('hashchange', route);
     window.addEventListener('DOMContentLoaded', route);
 
-    // Top nav click helper
-    document.addEventListener('DOMContentLoaded', ()=>{
-      document.querySelectorAll('nav .tab').forEach(a => {
-        a.addEventListener('click', e => {
-          e.preventDefault();
-          const href = a.getAttribute('href');
-          if(href){ location.hash = href; route(); }
-        });
-      });
-    });
-
-    // Back-to-top button
+    // Back-to-top visibility toggle
     const toTopBtn = document.getElementById('toTop');
     window.addEventListener('scroll', ()=>{
       if(window.scrollY > 300) toTopBtn.classList.add('show');
@@ -274,23 +288,38 @@
     });
     toTopBtn.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
 
-    // Modal close controls (tap anywhere: backdrop, image, or X; ESC closes too)
-    document.getElementById('closeModal').addEventListener('click', closeModal);
-    modal.addEventListener('click', (e)=>{
-      if (e.target === modal || e.target.id === 'modalImg' || e.target.closest('.dialog-img')) closeModal();
+    // Ensure nav clicks always trigger routing immediately
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('nav .tab').forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const href = a.getAttribute('href');
+          if (href) {
+            location.hash = href;
+            route();
+          }
+        });
+      });
     });
-    window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
-    // logo auto-detect (next to index.html)
+    // Modal close controls
+    document.getElementById('closeModal').addEventListener('click',()=>{
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+    });
+    modal.addEventListener('click', e=>{ if(e.target===modal){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }});
+    window.addEventListener('keydown', e=>{ if(e.key==='Escape') { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }});
+
+    // Logos: set from local file (same folder as HTML)
     (function setLogos(){
       const brand = document.getElementById('brandLogo');
       const hero  = document.getElementById('heroLogo');
-      const guesses = ['scorpion-logo.png','scorpion-logo.jpg','logo.png','logo.jpg','SCORPION-LOGO.PNG','LOGO.PNG'];
-      for(const src of guesses){
-        const i = new Image();
-        i.onload = ()=>{ brand.src=src; hero.src=src; };
-        i.src = src;
-        if(i.complete && i.naturalWidth){ brand.src = src; hero.src = src; break; }
+      const candidates = ['scorpion-logo.png','scorpion-logo.jpg','logo.png','logo.jpg','SCORPION-LOGO.PNG','LOGO.PNG'];
+      for(const src of candidates){
+        const img = new Image();
+        img.onload = () => { brand.src = src; hero.src = src; };
+        img.src = src;
+        if(img.complete && img.naturalWidth){ brand.src = src; hero.src = src; break; }
       }
     })();
   </script>
