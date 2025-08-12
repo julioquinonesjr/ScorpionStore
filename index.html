@@ -163,6 +163,55 @@
       });
     }
 
+    // --- GitHub-friendly helpers: coarse sample + expand around hits ---
+    async function firstExistingPath(folder, num){
+      const n = String(num).padStart(4,'0');
+      for(const ext of EXTS){
+        const raw = `${folder}IMG_${n}.${ext}`;
+        const path = encodeURI(raw);
+        /* eslint-disable no-await-in-loop */
+        if(await loadImage(path)) return path;
+      }
+      return null;
+    }
+
+    async function findSeeds(folder){
+      const seeds = [];
+      // Coarse sampling every 25 numbers to discover where files exist
+      for(let i=START; i<=END; i+=25){
+        const p = await firstExistingPath(folder, i);
+        if(p){ seeds.push(i); }
+        // Keep it snappy: if we already found a few seeds, that's enough
+        if(seeds.length >= 8) break;
+      }
+      // If no seeds found, try a smaller step to be thorough
+      if(seeds.length === 0){
+        for(let i=START; i<=END; i+=10){
+          const p = await firstExistingPath(folder, i);
+          if(p){ seeds.push(i); if(seeds.length >= 4) break; }
+        }
+      }
+      return seeds;
+    }
+
+    async function expandFrom(folder, startIdx){
+      const MAX_MISSES = 30; // stop when we hit a long gap
+      // Expand downward
+      let misses = 0;
+      for(let i=startIdx; i>=START; i--){
+        const p = await firstExistingPath(folder, i);
+        if(p){ addCard(p); misses = 0; }
+        else if(++misses >= MAX_MISSES) break;
+      }
+      // Expand upward
+      misses = 0;
+      for(let i=startIdx+1; i<=END; i++){
+        const p = await firstExistingPath(folder, i);
+        if(p){ addCard(p); misses = 0; }
+        else if(++misses >= MAX_MISSES) break;
+      }
+    }
+
     async function loadCategory(cat){
       clearGrid();
       const home = document.querySelector('[data-view="home"]');
@@ -172,20 +221,16 @@
       const folder = CATEGORIES[cat];
       if(!folder) return;
 
-      // Try numbers; for each number, accept only the first extension that exists
-      const MAX_CONSEC_MISSES = 10000; // early stop so it stays fast
-      let misses = 0;
-      for(let i = START; i <= END; i++){
-        const num = String(i).padStart(4,'0');
-        let foundForThis = false;
-        for(const ext of EXTS){
-          const rawPath = `${folder}IMG_${num}.${ext}`;
-          const path = encodeURI(rawPath); // encode spaces (e.g., "Rash Guards/") for GitHub Pages
-          /* eslint-disable no-await-in-loop */
-          if(await loadImage(path)) { addCard(path); foundForThis = true; break; }
-        }
-        misses = foundForThis ? 0 : (misses+1);
-        if(misses >= MAX_CONSEC_MISSES) break;
+      // 1) Find a few seed indices quickly
+      const seeds = await findSeeds(folder);
+      if(seeds.length === 0){
+        // Nothing found during sampling; bail quietly (likely no files yet)
+        return;
+      }
+      // 2) Expand around each seed to load the rest without hammering GH with 10k requests
+      for(const s of seeds){
+        /* eslint-disable no-await-in-loop */
+        await expandFrom(folder, s);
       }
     }
 
