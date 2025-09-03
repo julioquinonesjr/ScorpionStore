@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <title>Scorpion Store</title>
+    <meta name="description" content="Scorpion Store — Heavy-duty prints. Fight-ready gear." />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+      :root{
+        --max:1200px;
+        --pad:16px;
+        --ink:#f2f2f2;
+        --bg:#0a0a0a;
+        --panel:#111;
+        --line:#242424;
+        --thumb:#2b2b2b;
+      }
+      *{box-sizing:border-box}
+      html,body{height:100%;margin:0}
+      body{
+        background:var(--bg);
+        color:var(--ink);
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      h1,h2,h3,h4,.brand span,.menu a{
+        font-family: "Bebas Neue", Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+        letter-spacing:.8px;
+        text-transform: uppercase;
+      }
+      a{color:inherit;text-decoration:none}
+
+      header{position:sticky; top:0; z-index:10; background:#0d0d0d; border-bottom:1px solid var(--line)}
+      .navbar{max-width:var(--max); margin:0 auto; padding:14px var(--pad); display:flex; align-items:center; gap:14px}
+      .brand{display:flex; align-items:center; gap:12px; font-weight:800}
+      .brand img{height:56px; width:auto; display:block; filter: drop-shadow(0 0 6px rgba(0,0,0,.5))}
+      .brand span{font-size:28px; line-height:1}
+      .spacer{flex:1}
+      .menu{display:flex; gap:12px; flex-wrap:wrap}
+      .menu a{
+        padding:10px 14px;
+        border:1px solid #363636;
+        border-radius:999px;
+        opacity:.98;
+        transition: transform .12s ease, background .12s ease, color .12s ease, border-color .12s ease;
+        font-size:18px;
+      }
+      .menu a:hover{background:var(--ink); color:var(--bg); transform: translateY(-1px); border-color:transparent}
+      .menu a.active{background:var(--ink); color:var(--bg); border-color:transparent}
+
+      main{max-width:var(--max); margin:0 auto; padding:28px var(--pad)}
+      [data-route]{display:none}
+      [data-route].is-active{display:block}
+
+      .hero-wrap{margin:0 calc(-1 * var(--pad));}
+      .hero{
+        position:relative;
+        min-height:68vh;
+        display:grid;
+        place-items:center;
+        overflow:hidden;
+        border-radius:18px;
+        border:1px solid var(--line);
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0));
+      }
+      .hero img.hero-bg{
+        position:absolute;
+        inset:0;
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        opacity:.9;
+        filter:contrast(1.05) saturate(1.05) brightness(.9);
+      }
+      .hero .overlay{
+        position:relative;
+        z-index:1;
+        text-align:center;
+        padding:32px 16px;
+        text-shadow:0 2px 10px rgba(0,0,0,.55);
+      }
+      .hero .mark{display:flex; align-items:center; justify-content:center; gap:14px}
+      .hero .mark img{height:96px; width:auto}
+      .hero .headline{margin-top:10px; font-size:64px; line-height:.95}
+      .hero .sub{margin-top:6px; font:600 16px/1.4 Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; opacity:.9}
+
+      .crumbs{opacity:.7; margin-bottom:16px}
+      .gallery{display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:16px}
+      .card{border:1px solid var(--line); border-radius:18px; overflow:hidden; background:var(--panel); padding:12px}
+      .thumb-wrap{
+        width:100%;
+        aspect-ratio:1/1;
+        background: var(--thumb);
+        border-radius:12px;
+        display:grid;
+        place-items:center;
+        overflow:hidden;
+      }
+      .thumb-wrap img{
+        width:100%;
+        height:100%;
+        object-fit:contain;
+        display:block;
+        image-rendering:auto;
+      }
+
+      .footer{opacity:.7; text-align:center; padding:28px 0; border-top:1px solid var(--line); margin-top:32px}
+
+      .empty{opacity:.7; font-size:14px; padding:12px}
+      @media (max-width: 640px){
+        .brand img{height:48px}
+        .brand span{font-size:24px}
+        .menu a{font-size:16px}
+        .hero{min-height:56vh}
+        .hero .mark img{height:78px}
+        .hero .headline{font-size:44px}
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <a class="brand" href="#home"><img id="brandLogo" src="" alt="Logo"><span>Scorpion Store</span></a>
+        <div class="spacer"></div>
+        <div class="menu" id="menu">
+          <a href="#home" data-link="home">Home</a>
+          <a href="#hoodies" data-link="hoodies">Hoodies</a>
+          <a href="#tshirts" data-link="tshirts">T-Shirts</a>
+          <a href="#rashguards" data-link="rashguards">Rash Guards</a>
+          <a href="#logos" data-link="logos">Logos</a>
+          <a href="#finalapparel" data-link="finalapparel">Final Apparel</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section data-route="home" id="route-home">
+        <div class="hero-wrap">
+          <section class="hero">
+            <img class="hero-bg" id="heroBg" src="" alt="Scorpion Hero">
+            <div class="overlay">
+              <div class="mark">
+                <img id="heroLogo" src="" alt="Logo">
+                <h1 class="headline">Scorpion Store</h1>
+              </div>
+              <div class="sub">Heavy-duty prints. Fight-ready gear.</div>
+            </div>
+          </section>
+        </div>
+        <footer class="footer">© <span id="year"></span> Scorpion Fighting System</footer>
+      </section>
+
+      <section data-route="hoodies" id="route-hoodies">
+        <div class="crumbs"><a href="#home">Home</a> &nbsp;/&nbsp; Hoodies</div>
+        <h1>Hoodies</h1>
+        <div class="gallery" id="gallery-hoodies"></div>
+      </section>
+
+      <section data-route="tshirts" id="route-tshirts">
+        <div class="crumbs"><a href="#home">Home</a> &nbsp;/&nbsp; T-Shirts</div>
+        <h1>T-Shirts</h1>
+        <div class="gallery" id="gallery-tshirts"></div>
+      </section>
+
+      <section data-route="rashguards" id="route-rashguards">
+        <div class="crumbs"><a href="#home">Home</a> &nbsp;/&nbsp; Rash Guards</div>
+        <h1>Rash Guards</h1>
+        <div class="gallery" id="gallery-rashguards"></div>
+      </section>
+
+      <section data-route="logos" id="route-logos">
+        <div class="crumbs"><a href="#home">Home</a> &nbsp;/&nbsp; Logos</div>
+        <h1>Logos</h1>
+        <div class="gallery" id="gallery-logos"></div>
+      </section>
+
+      <section data-route="finalapparel" id="route-finalapparel">
+        <div class="crumbs"><a href="#home">Home</a> &nbsp;/&nbsp; Final Apparel</div>
+        <h1>Final Apparel</h1>
+        <div class="gallery" id="gallery-finalapparel"></div>
+      </section>
+    </main>
+
+    <script>
+      // Auto-detect owner/repo from GitHub Pages URL
+      function getGhCtx(){
+        const host = location.hostname;
+        if(!/github\.io$/i.test(host)) return null;
+        const owner = host.split(".")[0];
+        const pathBits = location.pathname.split("/").filter(Boolean);
+        const repo = pathBits[0] || "";
+        return owner && repo ? {owner, repo} : null;
+      }
+
+      const FOLDERS = {
+        hoodies: "Hoodies",
+        tshirts: "T-Shirts",
+        rashguards: "Rash Guards",
+        logos: "Logos",
+        finalapparel: "Final Apparel"
+      };
+      const EXT = ["jpg","jpeg","png","webp","gif","avif","bmp"];
+
+      async function ghListImages(owner, repo, folder){
+        const path = folder.split("/").map(encodeURIComponent).join("/");
+        const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+        const res = await fetch(url, { headers: { "Accept": "application/vnd.github.v3+json" } });
+        if(!res.ok) return [];
+        const items = await res.json();
+        if(!Array.isArray(items)) return [];
+        return items
+          .filter(x => x.type === "file")
+          .filter(x => {
+            const m = x.name.match(/\.([^.]+)$/);
+            return m && EXT.includes(m[1].toLowerCase());
+          })
+          .map(x => x.download_url); // use raw file URL directly (works with spaces)
+      }
+
+      function squareCard(src){
+        const art = document.createElement("article");
+        art.className = "card";
+        art.innerHTML = `<div class="thumb-wrap"><img src="${src}" alt=""></div>`;
+        return art;
+      }
+
+      async function renderGallery(key, ctx){
+        const el = document.getElementById("gallery-"+key);
+        if(!el || el.dataset.loaded === "1") return;
+        const folder = FOLDERS[key];
+        let images = [];
+        if(ctx){
+          try { images = await ghListImages(ctx.owner, ctx.repo, folder); }
+          catch(e){ images = []; }
+        }
+        if(images.length === 0){
+          el.innerHTML = `<div class="empty">Add images to the <b>${folder}</b> folder in your repo and they will appear here automatically.</div>`;
+          el.dataset.loaded = "1";
+          return;
+        }
+        const frag = document.createDocumentFragment();
+        images.forEach(src => frag.appendChild(squareCard(src)));
+        el.appendChild(frag);
+        el.dataset.loaded = "1";
+      }
+
+      async function setHero(ctx){
+        const brandEl = document.getElementById("brandLogo");
+        const heroLogo = document.getElementById("heroLogo");
+        const heroBg = document.getElementById("heroBg");
+        // Try Logos folder for logo; use first image as brand/hero mark
+        if(ctx){
+          const logos = await ghListImages(ctx.owner, ctx.repo, "Logos");
+          if(logos[0]){
+            brandEl.src = logos[0];
+            heroLogo.src = logos[0];
+          } else {
+            brandEl.src = "Logos/heavy-duty.png";
+            heroLogo.src = "Logos/heavy-duty.png";
+          }
+          // Try a hero image in Hero/ or take the first non-logo image we can find
+          const heroFolder = await ghListImages(ctx.owner, ctx.repo, "Hero");
+          if(heroFolder[0]){
+            heroBg.src = heroFolder[0];
+            return;
+          }
+          // Fallback: pick first image from Hoodies or T-Shirts
+          const hoodies = await ghListImages(ctx.owner, ctx.repo, "Hoodies");
+          if(hoodies[0]) { heroBg.src = hoodies[0]; return; }
+          const tees = await ghListImages(ctx.owner, ctx.repo, "T-Shirts");
+          if(tees[0]) { heroBg.src = tees[0]; return; }
+          heroBg.src = "Hero/hero.jpg"; // ultimate fallback (relative)
+        } else {
+          // Not on GitHub Pages domain; rely on relative paths
+          brandEl.src = "Logos/heavy-duty.png";
+          heroLogo.src = "Logos/heavy-duty.png";
+          heroBg.src = "Hero/hero.jpg";
+        }
+      }
+
+      const routes = ["home","hoodies","tshirts","rashguards","logos","finalapparel"];
+      const sections = Object.fromEntries(routes.map(r => [r, document.getElementById("route-"+r)]));
+      const menu = document.getElementById("menu");
+
+      function setActiveLink(key){
+        Array.from(menu.querySelectorAll("a")).forEach(a => {
+          a.classList.toggle("active", a.dataset.link === key);
+        });
+      }
+
+      let ghCtx = null;
+
+      async function route(){
+        let hash = (location.hash || "#home").replace("#","").toLowerCase();
+        if(!routes.includes(hash)) hash = "home";
+        routes.forEach(r => sections[r].classList.toggle("is-active", r === hash));
+        setActiveLink(hash);
+        // Render on demand
+        if(hash !== "home"){
+          await renderGallery(hash, ghCtx);
+        }
+        window.scrollTo({top: 0, behavior: "instant"});
+      }
+
+      window.addEventListener("hashchange", route);
+      window.addEventListener("DOMContentLoaded", async ()=>{
+        document.getElementById("year").textContent = new Date().getFullYear();
+        ghCtx = getGhCtx();
+        await setHero(ghCtx);
+        await route();
+      });
+    </script>
+  </body>
+</html>
