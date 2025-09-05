@@ -399,14 +399,7 @@
       window.addEventListener("DOMContentLoaded", async ()=>{
         document.getElementById("year").textContent = new Date().getFullYear();
 
-        // Load hero images
-        const rashUrl = await ghGetFileRaw("Rash Guards", "IMG_7001.PNG");
-        const teeUrl  = await ghGetFileRaw("TShirts", "IMG_5000.JPG");
-        const strip = document.getElementById("heroBgStrip");
-        if(strip){
-          const imgs = strip.querySelectorAll("img");
-          imgs[0].src = rashUrl || "";
-          imgs[1].src = teeUrl  || rashUrl || "";
+        
         }
 
         // Safety: ensure something is active
