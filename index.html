@@ -248,11 +248,32 @@
       };
       const EXT = ["jpg","jpeg","png","webp","gif","avif","bmp","svg"];
 
-      /* Hero: exactly two images you specified */
-      const HERO_INPUT = [
-        { folder: "Rash Guards", name: "IMG_7001.PNG" },
-        { folder: "Rash Guards", name: "IMG_7001.PNG" }
-      ];
+<script>
+  /* Hero: exactly two images you specified */
+  const HERO_INPUT = [
+    { folder: "Rash Guards", name: "IMG_6993.PNG" },
+    { folder: "Rash Guards", name: "IMG_6996.JPG" }
+  ];
+
+  async function ghGetFileRaw(folder, name) {
+    // this is already in your file — leave it as-is
+    return `/${encodeURIComponent(folder)}/${encodeURIComponent(name)}`;
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const strip = document.getElementById("heroBgStrip");
+    if (strip) {
+      // Hero images (now dynamic)
+      const urls = await Promise.all(
+        HERO_INPUT.map(({ folder, name }) => ghGetFileRaw(folder, name))
+      );
+      const imgs = strip.querySelectorAll("img");
+      imgs[0].src = urls[0] || "";
+      imgs[1].src = urls[1] || urls[0] || ""; // fallback to first if second missing
+    }
+  });
+</script>
+
 
       async function ghGetFileRaw(folder, filename){
         const enc = `${encodeURIComponent(folder)}/${encodeURIComponent(filename)}`;
