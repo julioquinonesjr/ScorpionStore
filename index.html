@@ -248,16 +248,7 @@
       };
       const EXT = ["jpg","jpeg","png","webp","gif","avif","bmp","svg"];
 
-    // Load hero images (use the two camo files)
-const strip = document.getElementById("heroBgStrip");
-if (strip) {
-  const [u1, u2] = await Promise.all([
-    ghGetFileRaw("Rash Guards", "IMG_6993.PNG"),
-    ghGetFileRaw("Rash Guards", "IMG_6996.JPG"),
-  ]);
-  const imgs = strip.querySelectorAll("img");
-  imgs[0].src = u1 || "";
-  imgs[1].src = u2 || u1 || "";
+    /* Hero: exactly two images you specified */ const HERO_INPUT = [ { folder: "Rash Guards", name: "IMG_7001.PNG" }, { folder: "Rash Guards", name: "IMG_6996.JPG" } ];
 }
 
       ];
